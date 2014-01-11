@@ -1,5 +1,5 @@
 refreshSVG = () ->
-  $('body').html $('body').html()
+  $('#wrap').html $('#wrap').html()
 
 options = {
   padding: 10
@@ -31,6 +31,7 @@ highlightNeuron = (e) ->
 drawNetwork = (inputs, layers) ->
   ctx = $('#canvas')
   canvas = $('#canvas g')
+  canvas.empty()
 
   dims = {
     width: ctx.width()
@@ -169,11 +170,42 @@ drawNetwork = (inputs, layers) ->
   # put in global (TEMP)
   window.neurons = neurons
 
-$ ->
-  inputs = 3
-  layers = [2, 2, 1]
-
+createNetwork = (inputs, layers) ->
   drawNetwork(inputs, layers)
   refreshSVG()
   $('.neuron').on('mouseover', highlightNeuron)
   $('.neuron').on('mouseout', highlightNeuron)
+
+draw = () ->
+  layers = []
+  $('#layers li').each ->
+    layers.push 1 * ($ @).find('input').val()
+  layers.push 1 * $('#numOutputs').val()
+  createNetwork $('#numInputs').val(), layers
+
+hiddenLayers = () ->
+  n = 1 * $('#numLayers').val()
+  div = $('#layers')
+  div.empty()
+  if n > 0
+    list = $('<ul>')
+    div.append list
+
+    for i in [1..n]
+      li = $('<li>')
+      label = $('<label>').text("Number of neurons in layer #{i}:")
+      label.append $('<input>').attr {
+        type: 'number'
+        min: 1
+        max: 6
+        value: 2
+        'data-id': i
+      }
+      li.append label
+      list.append li
+
+$ ->
+  draw()
+
+  $('#redraw').on('click', draw)
+  $('#numLayers').on('change', hiddenLayers)

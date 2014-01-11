@@ -43,14 +43,6 @@ drawNetwork = (inputs, layers) ->
   inputWidth = options.sizes.inputNeuron + 2 * options.padding
   curLayer = []
   for i in [0...inputs]
-    ###canvas.append $('<rect>').attr {
-      x: options.layerPad
-      width: inputWidth
-      y: i * inputHeight
-      height: inputHeight
-      fill: 'transparent'
-      stroke: '#000'
-    }###
     neuron = createNeuron(options.layerPad + inputWidth / 2, (i + 1 / 2) * inputHeight, options.sizes.inputNeuron / 2).addClass('inputNeuron')
     curLayer.push neuron
     canvas.append neuron
@@ -65,14 +57,6 @@ drawNetwork = (inputs, layers) ->
     for i in [0...numNeurons]
       x = startWidth + layer * (options.sizes.neuron + 2 * options.padding) +
             (layer + 1) * options.layerPad
-      ###canvas.append $('<rect>').attr {
-        x: x
-        width: neuronWidth
-        y: i * neuronHeight
-        height: neuronHeight
-        fill: 'transparent'
-        stroke: '#000'
-      }###
       neuron = createNeuron(x + neuronWidth / 2, (i + 1 / 2) * neuronHeight, options.sizes.neuron / 2).addClass('regularNeuron')
       curLayer.push neuron
       canvas.append neuron

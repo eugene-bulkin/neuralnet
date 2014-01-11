@@ -25,7 +25,7 @@ createNeuron = (x, y, r) ->
 highlightNeuron = (e) ->
   curId = ($ @).attr('data-id')
   opacity = ~~(e.type is 'mouseover')
-  $("[data-start=#{curId}], [data-end=#{curId}]").each ->
+  $(".midLine[data-start=#{curId}], .midLine[data-end=#{curId}]").each ->
     ($ @).css('opacity', opacity)
 
 drawNetwork = (inputs, layers) ->
@@ -82,6 +82,28 @@ drawNetwork = (inputs, layers) ->
   for layer, i in neurons
     inputLayer = i is 0
     outputLayer = i is neurons.length - 1
+    if inputLayer
+      for neuron in layer
+        curX = 1 * neuron.attr 'cx'
+        curR = 1 * neuron.attr 'r'
+        curY = 1 * neuron.attr 'cy'
+        line = $('<line>').addClass('inLine').attr {
+          x1: options.padding
+          x2: curX - curR - options.padding
+          y1: curY
+          y2: curY
+          'marker-end': 'url(#arrowEnd)'
+          'stroke-width': options.lineWidth
+          'data-end': neuron.attr 'data-id'
+        }
+        canvas.append line
+        inText = $('<text>').addClass('inLine').text('input').attr {
+          x: (curX - curR) / 2
+          y: curY
+          dy: -2 * options.lineWidth - 4
+          'data-end': endId
+        }
+        canvas.append inText
     if not outputLayer
       # arrow to right
       for neuron in layer
@@ -117,7 +139,7 @@ drawNetwork = (inputs, layers) ->
           textX = startX + w / 2
           textY = startY + h / 2
           angle = Math.atan(h / w) * 180 / Math.PI
-          outText = $('<text>').text('output').attr {
+          outText = $('<text>').addClass('midLine').text('output').attr {
             x: textX
             y: textY
             transform: "rotate(#{angle} #{textX},#{textY})"
@@ -125,7 +147,7 @@ drawNetwork = (inputs, layers) ->
             'data-start': startId
             'data-end': endId
           }
-          wText = $('<text>').text('weight').attr {
+          wText = $('<text>').addClass('midLine').text('weight').attr {
             x: textX
             y: textY
             transform: "rotate(#{angle} #{textX},#{textY})"

@@ -23,9 +23,12 @@ $neuron-fill: hsla(105, 100%, 40%, 0.25);
 @include neuron($neuron-fill, regularNeuron);
 
 svg line {
+  stroke: #222;
   &.midLine {
     opacity: 0;
-    stroke: #222;
+  }
+  &.inLine {
+    opacity: 1;
   }
 }
 
@@ -33,7 +36,9 @@ svg text {
   text-anchor: middle;
   fill: #000;
   stroke: none;
-  opacity: 0;
+  &.midLine {
+    opacity: 0;
+  }
   font: {
     size: 16px;
     weight: bold;

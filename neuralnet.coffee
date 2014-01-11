@@ -81,7 +81,7 @@ drawNetwork = (inputs, layers) ->
   # lines
   for layer, i in neurons
     inputLayer = i is 0
-    outputLayer = i is neurons.length - 1
+    outputLayer = i is (neurons.length - 1)
     if inputLayer
       for neuron in layer
         curX = 1 * neuron.attr 'cx'
@@ -104,7 +104,29 @@ drawNetwork = (inputs, layers) ->
           'data-end': endId
         }
         canvas.append inText
-    if not outputLayer
+    if outputLayer
+      for neuron in layer
+        curX = 1 * neuron.attr 'cx'
+        curR = 1 * neuron.attr 'r'
+        curY = 1 * neuron.attr 'cy'
+        line = $('<line>').addClass('outLine').attr {
+          x1: curX + curR + options.padding
+          x2: dims.width - options.padding
+          y1: curY
+          y2: curY
+          'marker-end': 'url(#arrowEnd)'
+          'stroke-width': options.lineWidth
+          'data-start': neuron.attr 'data-id'
+        }
+        canvas.append line
+        outText = $('<text>').addClass('outLine').text('output').attr {
+          x: (dims.width + curX + curR) / 2
+          y: curY
+          dy: -2 * options.lineWidth - 4
+          'data-start': endId
+        }
+        canvas.append outText
+    else
       # arrow to right
       for neuron in layer
         curX = 1 * neuron.attr('cx')

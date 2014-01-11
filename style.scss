@@ -27,7 +27,7 @@ svg line {
   &.midLine {
     opacity: 0;
   }
-  &.inLine {
+  &.inLine, &.outLine {
     opacity: 1;
   }
 }

@@ -1,0 +1,15 @@
+{
+  "name": "neuralnet",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-autoprefixer": "*",
+    "grunt-csso": "*",
+    "grunt-coffeelint": "*",
+    "grunt-contrib-coffee": "*",
+    "grunt-contrib-sass": "*",
+    "grunt-contrib-jade": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-watch": "*"
+  }
+}

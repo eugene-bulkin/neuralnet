@@ -1,0 +1,42 @@
+svg#canvas {
+  height: 600px;
+  border: 1px solid #000;
+  margin: auto;
+}
+
+$input-fill: hsla(225, 100%, 50%, 0.25);
+$neuron-fill: hsla(105, 100%, 40%, 0.25);
+
+@mixin neuron($color, $class-name) {
+  circle.#{$class-name} {
+    fill: $color;
+    stroke: #000;
+
+    &:hover {
+      cursor: pointer;
+      fill: change_color($color, $alpha: 0.5);
+    }
+  }
+}
+
+@include neuron($input-fill, inputNeuron);
+@include neuron($neuron-fill, regularNeuron);
+
+svg line {
+  &.midLine {
+    opacity: 0;
+    stroke: #222;
+  }
+}
+
+svg text {
+  text-anchor: middle;
+  fill: #000;
+  stroke: none;
+  opacity: 0;
+  font: {
+    size: 16px;
+    weight: bold;
+    family: 'Courier New', monospace;
+  }
+}

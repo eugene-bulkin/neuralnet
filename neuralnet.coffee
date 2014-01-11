@@ -87,6 +87,7 @@ drawNetwork = (inputs, layers) ->
         curX = 1 * neuron.attr 'cx'
         curR = 1 * neuron.attr 'r'
         curY = 1 * neuron.attr 'cy'
+        curId = neuron.attr 'data-id'
         line = $('<line>').addClass('inLine').attr {
           x1: options.padding
           x2: curX - curR - options.padding
@@ -94,14 +95,14 @@ drawNetwork = (inputs, layers) ->
           y2: curY
           'marker-end': 'url(#arrowEnd)'
           'stroke-width': options.lineWidth
-          'data-end': neuron.attr 'data-id'
+          'data-start': curId
         }
         canvas.append line
         inText = $('<text>').addClass('inLine').text('input').attr {
           x: (curX - curR) / 2
           y: curY
           dy: -2 * options.lineWidth - 4
-          'data-end': endId
+          'data-start': curId
         }
         canvas.append inText
     if outputLayer
@@ -109,6 +110,7 @@ drawNetwork = (inputs, layers) ->
         curX = 1 * neuron.attr 'cx'
         curR = 1 * neuron.attr 'r'
         curY = 1 * neuron.attr 'cy'
+        curId = neuron.attr 'data-id'
         line = $('<line>').addClass('outLine').attr {
           x1: curX + curR + options.padding
           x2: dims.width - options.padding
@@ -116,14 +118,14 @@ drawNetwork = (inputs, layers) ->
           y2: curY
           'marker-end': 'url(#arrowEnd)'
           'stroke-width': options.lineWidth
-          'data-start': neuron.attr 'data-id'
+          'data-start': curId
         }
         canvas.append line
         outText = $('<text>').addClass('outLine').text('output').attr {
           x: (dims.width + curX + curR) / 2
           y: curY
           dy: -2 * options.lineWidth - 4
-          'data-start': endId
+          'data-start': curId
         }
         canvas.append outText
     else

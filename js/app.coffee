@@ -1,6 +1,7 @@
 class NNApp
   constructor: () ->
     @view = new NNView()
+    @anim = new NNAnim(@view)
     @network = null
   saveToStorage: (numInputs, hiddenLayers, numOutputs) ->
     obj = {
@@ -22,15 +23,17 @@ class NNApp
   initialize: () =>
     [numInputs, hiddenLayers, numOutputs] = @view.layerData()
     @saveToStorage(numInputs, hiddenLayers, numOutputs)
+    @network?.destroy()
     @network = new NeuralNetwork numInputs
     for layer in hiddenLayers
       @network.addLayer layer
     @network.addOutputLayer numOutputs
     @view.setNetwork @network
+    @anim.init()
     @view.draw()
 
 $ ->
-  app = new NNApp()
+  window.app = new NNApp()
   app.loadFromStorage()
   app.initialize()
 

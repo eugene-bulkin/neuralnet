@@ -1,9 +1,9 @@
-class @NeuralNetworkError extends Error
+class NeuralNetworkError extends Error
   constructor: (msg) ->
     @name = 'NeuralNetworkError'
     @message = msg
 
-class @Neuron
+class Neuron
   @sigmoidFn: (shift = 0) ->
     (x) -> 1 / (1 + Math.exp(shift - x))
   @thresholdFn = (a = 0) ->
@@ -25,8 +25,9 @@ class @Neuron
   apply: (inputs) ->
     sum (n * @weights[i] for n, i in inputs)
 
-class @NeuralNetwork
+class NeuralNetwork extends Observable
   constructor: (@numInputs = 2) ->
+    super
     @layers = []
     @finalized = false
   addLayer: (numNeurons, activation) ->
@@ -42,6 +43,11 @@ class @NeuralNetwork
     @finalized = true
   forward: (inputs) ->
     outputs = [inputs]
+    for input, i in inputs
+      @fire('step', {
+        type: 'input'
+        id: i
+      })
     for layer in @layers
       outputs.push layer.map (n) -> n.apply(outputs[outputs.length - 1])
     outputs

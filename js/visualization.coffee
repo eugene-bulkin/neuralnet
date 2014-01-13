@@ -1,3 +1,11 @@
+class NNAnim extends Observer
+  constructor: (@view) ->
+    super
+  init: () ->
+    @listen(@view.network, 'step', @step)
+  step: (e) ->
+    console.log e
+
 class NNView
   constructor: () ->
     @options = {

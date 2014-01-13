@@ -70,10 +70,9 @@ module.exports = (grunt) ->
       compile: {
         options: {
           sourceMap: true
-          compileJoined: true
         }
         files: {
-          'neuralnet.js': ['js/*.coffee']
+          'neuralnet.js': ['js/utils.coffee', 'js/network.coffee', 'js/visualization.coffee', 'js/app.coffee']
         }
       }
     }

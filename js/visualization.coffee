@@ -189,7 +189,7 @@ class NNView
     $('.neuron').on('mouseover', @highlightNeuron)
     $('.neuron').on('mouseout', @highlightNeuron)
 
-  hiddenLayers: () =>
+  hiddenLayers: () ->
     n = 1 * $('#numLayers').val()
     div = $('#layers')
     div.empty()

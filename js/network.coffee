@@ -1,14 +1,3 @@
-# Utility functions
-
-sum = (l) -> l.reduce (a, b) -> a + b
-zip = () ->
-  lengthArray = (arr.length for arr in arguments)
-  length = Math.min(lengthArray...)
-  for i in [0...length]
-    arr[i] for arr in arguments
-
-# Neural network stuff
-
 class @NeuralNetworkError extends Error
   constructor: (msg) ->
     @name = 'NeuralNetworkError'
@@ -85,3 +74,6 @@ class @NeuralNetwork
         outputs = @forward x
         # backpropagate
         @backward(outputs, y, learningRate)
+  # lists the neurons in order for use in view
+  listNeurons: () ->
+    @layers.reduce (p, l) -> p.concat l

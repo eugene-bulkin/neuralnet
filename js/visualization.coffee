@@ -10,6 +10,7 @@ class NNView
       }
     }
     @neuronCounter = 0
+    @network = null
 
   refreshSVG: () ->
     $('#wrap').html $('#wrap').html()
@@ -39,6 +40,7 @@ class NNView
       height: ctx.height()
     }
     neurons = []
+    networkNeurons = @network?.listNeurons()
 
     # input layer
     inputHeight = dims.height / inputs
@@ -116,7 +118,7 @@ class NNView
           canvas.append outText
       else
         # arrow to right
-        for neuron in layer
+        for neuron, neuronIndex in layer
           curX = 1 * neuron.attr('cx')
           curR = 1 * neuron.attr 'r'
           startX = curX + curR + @options.padding
@@ -157,7 +159,9 @@ class NNView
               'data-start': startId
               'data-end': endId
             }
-            wText = $('<text>').addClass('midLine').text('weight').attr {
+            weight = networkNeurons[endId - inputs].weights[neuronIndex]
+            weight = roundTo(weight, 2)
+            wText = $('<text>').addClass('midLine').text(weight).attr {
               x: textX
               y: textY
               transform: "rotate(#{angle} #{textX},#{textY})"
@@ -198,10 +202,19 @@ class NNView
         li.append label
         list.append li
 
+  setNetwork: (network) ->
+    @network = network
+
+  layerData: () ->
+    numInputs = 1 * $('#numInputs').val()
+    hiddenLayers = []
+    $('#layers li').each ->
+      hiddenLayers.push 1 * ($ @).find('input').val()
+    numOutputs = 1 * $('#numOutputs').val()
+    [numInputs, hiddenLayers, numOutputs]
+
   draw: () =>
     @neuronCounter = 0
-    layers = []
-    $('#layers li').each ->
-      layers.push 1 * ($ @).find('input').val()
-    layers.push 1 * $('#numOutputs').val()
-    @createNetwork $('#numInputs').val(), layers
+    [numInputs, hiddenLayers, numOutputs] = @layerData()
+    layers = hiddenLayers.concat numOutputs
+    @createNetwork numInputs, layers

@@ -5,7 +5,7 @@ module.exports = (grunt) ->
     # monitoring
     watch: {
       scripts: {
-        files: '*.coffee'
+        files: 'js/*.coffee'
         tasks: ['coffeelint', 'coffee']
       }
       styles: {
@@ -21,7 +21,7 @@ module.exports = (grunt) ->
     coffeelint: {
       app: {
         files: {
-          src: ['*.coffee']
+          src: ['js/*.coffee']
         }
         options: {
           max_line_length: {
@@ -70,9 +70,10 @@ module.exports = (grunt) ->
       compile: {
         options: {
           sourceMap: true
+          compileJoined: true
         }
         files: {
-          'neuralnet.js': 'neuralnet.coffee'
+          'neuralnet.js': ['js/*.coffee']
         }
       }
     }

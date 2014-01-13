@@ -1,5 +1,6 @@
 .sass-cache
 *.sublime-*
+*.src.*
 node_modules
 *.html
 *.map

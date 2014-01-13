@@ -1,5 +1,6 @@
 $ ->
-  draw()
+  view = new NNView()
+  view.draw()
 
-  $('#redraw').on('click', draw)
-  $('#numLayers').on('change', hiddenLayers)
+  $('#redraw').on('click', view.draw)
+  $('#numLayers').on('change', view.hiddenLayers)

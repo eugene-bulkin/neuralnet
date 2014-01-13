@@ -47,6 +47,7 @@ class NeuralNetwork extends Observable
       @fire('step', {
         type: 'input'
         id: i
+        value: input
       })
     for layer in @layers
       outputs.push layer.map (n) -> n.apply(outputs[outputs.length - 1])

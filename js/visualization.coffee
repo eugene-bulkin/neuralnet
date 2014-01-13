@@ -1,10 +1,30 @@
 class NNAnim extends Observer
   constructor: (@view) ->
     super
+
+    @queue = []
+    @interval = null
   init: () ->
     @listen(@view.network, 'step', @step)
-  step: (e) ->
-    console.log e
+  step: (e) =>
+    type = e.data.type
+    if type is 'input'
+      {id, value} = e.data
+      neuron = $(".neuron[data-id='#{id}']")
+      @queue.push () ->
+        $("text.inLine[data-start='#{id}']").text(value)
+        $("text.midLine.output[data-start='#{id}']").text(value)
+        $("line.inLine").css('stroke', '#000').attr('marker-end', 'url(#arrowEnd)')
+        $("line.inLine[data-start='#{id}']").css('stroke', '#f00').attr('marker-end', 'url(#arrowEndRed)')
+  popAnim: () =>
+    if @queue.length is 0
+      clearInterval @interval
+    else
+      @queue.shift()()
+      @view.refreshSVG()
+  animate: () ->
+    @interval = setInterval(@popAnim, 500)
+    return
 
 class NNView
   constructor: () ->
@@ -21,7 +41,11 @@ class NNView
     @network = null
 
   refreshSVG: () ->
+    $('.neuron').off('mouseover', @highlightNeuron)
+    $('.neuron').off('mouseout', @highlightNeuron)
     $('#wrap').html $('#wrap').html()
+    $('.neuron').on('mouseover', @highlightNeuron)
+    $('.neuron').on('mouseout', @highlightNeuron)
 
   createNeuron: (x, y, r) ->
     $('<circle>').addClass('neuron').attr {
@@ -159,7 +183,7 @@ class NNView
             textX = startX + w / 2
             textY = startY + h / 2
             angle = Math.atan(h / w) * 180 / Math.PI
-            outText = $('<text>').addClass('midLine').text('output').attr {
+            outText = $('<text>').addClass('midLine').addClass('output').text('output').attr {
               x: textX
               y: textY
               transform: "rotate(#{angle} #{textX},#{textY})"
@@ -169,7 +193,7 @@ class NNView
             }
             weight = networkNeurons[endId - inputs].weights[neuronIndex]
             weight = roundTo(weight, 2)
-            wText = $('<text>').addClass('midLine').text(weight).attr {
+            wText = $('<text>').addClass('midLine').addClass('weight').text(weight).attr {
               x: textX
               y: textY
               transform: "rotate(#{angle} #{textX},#{textY})"
@@ -186,8 +210,6 @@ class NNView
   createNetwork: (inputs, layers) ->
     @drawNetwork(inputs, layers)
     @refreshSVG()
-    $('.neuron').on('mouseover', @highlightNeuron)
-    $('.neuron').on('mouseout', @highlightNeuron)
 
   hiddenLayers: () ->
     n = 1 * $('#numLayers').val()

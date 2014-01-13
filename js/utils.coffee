@@ -26,7 +26,7 @@ class Observable
         @subscribers.splice(i, 1)
         break
   destroy: () ->
-    @subscribers.forEach (s) -> s.remove @
+    @subscribers.forEach (s) => s.remove @
 
 class Observer
   constructor: () ->
@@ -46,7 +46,7 @@ class Observer
       }
   remove: (subject) ->
     for s, i in @subjects
-      if s is observer
+      if s is subject.id
         delete @listeners[s.id]
         @subjects.splice(i, 1)
         break

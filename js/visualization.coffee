@@ -16,14 +16,14 @@ class NNAnim extends Observer
         $("text.midLine.output[data-start='#{id}']").text(value)
         $("line.inLine").css('stroke', '#000').attr('marker-end', 'url(#arrowEnd)')
         $("line.inLine[data-start='#{id}']").css('stroke', '#f00').attr('marker-end', 'url(#arrowEndRed)')
-  popAnim: () =>
-    if @queue.length is 0
-      clearInterval @interval
-    else
+  start: () ->
+    @interval = setInterval(@animate, 500)
+  stop: () ->
+    clearInterval @interval
+  animate: () =>
+    if @queue.length > 0
       @queue.shift()()
       @view.refreshSVG()
-  animate: () ->
-    @interval = setInterval(@popAnim, 500)
     return
 
 class NNView

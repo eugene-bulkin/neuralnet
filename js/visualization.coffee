@@ -4,6 +4,7 @@ class NNAnim extends Observer
 
     @queue = []
     @interval = null
+    @delay = 500
   init: () ->
     @listen(@view.network, 'step', @step)
   step: (e) =>
@@ -33,9 +34,12 @@ class NNAnim extends Observer
         $(".midLine").each ->
           ($ @).css('opacity', 0)
   start: () ->
-    @interval = setInterval(@animate, 200)
+    @interval = setInterval(@animate, @delay)
   stop: () ->
     clearInterval @interval
+  setDelay: (@delay) ->
+    @stop()
+    @start()
   animate: () =>
     if @queue.length > 0
       @queue.shift()()

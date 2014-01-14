@@ -118,6 +118,18 @@ class NeuralNetwork extends Observable
         [neuron, delta] = sublayer
         weightZip = zip(neuron.weights, outputs[i].map (x) -> x * neuron.actWeight(outputs[i + 1][j]) * rate * delta)
         neuron.weights = weightZip.map sum
+        for weight, wi in neuron.weights
+          prevLayer = @layers[i - 1]?.map((n) -> allNeurons.indexOf n) or [0...@numInputs]
+          prevIndex = if @layers[i - 1] then @numInputs + prevLayer[wi] else prevLayer[wi]
+          @fire('step', {
+            type: 'changeWeight'
+            id: @numInputs + allNeurons.indexOf neuron
+            value: [roundTo(weight, 2), prevIndex]
+          })
+    @fire('step', {
+      type: 'backwardDone'
+    })
+
   apply: (inputs) ->
     f = @forward(inputs)
     f[f.length - 1]

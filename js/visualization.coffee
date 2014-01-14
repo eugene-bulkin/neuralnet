@@ -48,6 +48,46 @@ class NNAnim extends Observer
         $("text.midLine.output[data-start='#{id}']").text(out + " (#{value})")
         $(".midLine[data-start=#{id}]").each ->
           ($ @).css('opacity', 1)
+    else if type is 'changeWeight'
+      [weight, wi] = value
+      @queue.push () ->
+        $("text.midLine").each ->
+          ($ @).css({
+            fill: '#000'
+            opacity: 0
+          })
+        $("line.midLine").each ->
+          ($ @).css({
+            stroke: '#000'
+            opacity: 0
+          }).attr('marker-end', 'url(#arrowEnd)')
+        out = $("text.midLine.output[data-start='#{wi}'][data-end='#{id}']")
+        outVal = out.text()
+        out.text(outVal.replace(new RegExp(' \\((.+)\\)'), ''))
+        $("text.midLine.weight[data-start='#{wi}'][data-end='#{id}']").text(weight)
+        $("text.midLine[data-start='#{wi}'][data-end='#{id}']").css({
+          fill: '#f00'
+          opacity: 1
+        })
+        $("line.midLine[data-start='#{wi}'][data-end='#{id}']").css({
+          stroke: '#f00'
+          opacity: 1
+        }).attr('marker-end', 'url(#arrowEndRed)')
+    else if type is 'backwardDone'
+      @queue.push () ->
+        $("text.outLine").each () ->
+          val = ($ @).text()
+          ($ @).text(val.replace(new RegExp(' \\((.+)\\)'), ''))
+        $("text.midLine").each ->
+          ($ @).css({
+            fill: '#000'
+            opacity: 0
+          })
+        $("line.midLine").each ->
+          ($ @).css({
+            stroke: '#000'
+            opacity: 0
+          }).attr('marker-end', 'url(#arrowEnd)')
   start: () ->
     @interval = setInterval(@animate, @delay)
   stop: () ->

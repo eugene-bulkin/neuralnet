@@ -92,6 +92,7 @@ class NNAnim extends Observer
     @interval = setInterval(@animate, @delay)
   stop: () ->
     clearInterval @interval
+    @queue.length = 0
   setDelay: (@delay) ->
     @stop()
     @start()

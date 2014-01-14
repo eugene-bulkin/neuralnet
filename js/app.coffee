@@ -21,6 +21,7 @@ class NNApp
     $('#layers li').each (i) ->
       ($ @).find('input').val(hiddenLayers[i])
   initialize: () =>
+    @anim.stop()
     [numInputs, hiddenLayers, numOutputs] = @view.layerData()
     @saveToStorage(numInputs, hiddenLayers, numOutputs)
     @network?.destroy()
@@ -30,6 +31,7 @@ class NNApp
     @network.addOutputLayer numOutputs
     @view.setNetwork @network
     @anim.init()
+    @anim.start()
     @view.draw()
 
   setHandlers: () ->
@@ -37,8 +39,6 @@ class NNApp
 
     $('#reinit').on('click', @initialize)
     $('#numLayers').on('change', @view.hiddenLayers)
-  startAnim: () ->
-    @anim.start()
   onResize: (e) =>
     @view.draw()
 
@@ -47,4 +47,3 @@ $ ->
   app.loadFromStorage()
   app.initialize()
   app.setHandlers()
-  app.startAnim()

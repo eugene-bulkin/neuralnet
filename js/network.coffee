@@ -23,7 +23,7 @@ class Neuron
       when 'threshold' then @actFn = Neuron.thresholdFn param
       when 'sigmoid' then @actFn = Neuron.sigmoidFn param
   apply: (inputs) ->
-    sum (n * @weights[i] for n, i in inputs)
+    @actFn(sum (n * @weights[i] for n, i in inputs))
 
 class NeuralNetwork extends Observable
   constructor: (@numInputs = 2) ->
@@ -47,11 +47,38 @@ class NeuralNetwork extends Observable
       @fire('step', {
         type: 'input'
         id: i
-        value: input
+        value: roundTo(input, 2)
       })
-    for layer in @layers
-      console.log layer
-      outputs.push layer.map (n) -> n.apply(outputs[outputs.length - 1])
+    @fire('step', {
+      type: 'inputsDone'
+      id: null
+      value: null
+    })
+    j = inputs.length
+    for layer, index in @layers
+      output = []
+      isOutputLayer = index is @layers.length - 1
+      for n in layer
+        v = n.apply(outputs[outputs.length - 1])
+        output.push v
+        @fire('step', {
+          type: 'hidden'
+          id: j
+          value: roundTo(v, 2)
+        })
+        if isOutputLayer
+          @fire('step', {
+            type: 'output'
+            id: j
+            value: roundTo(v, 2)
+          })
+        j += 1
+      outputs.push output
+    @fire('step', {
+      type: 'forwardDone'
+      id: null
+      value: null
+    })
     outputs
   backward: (outputs, goal, rate) ->
     # calculate all the errors

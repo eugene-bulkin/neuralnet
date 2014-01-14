@@ -7,17 +7,33 @@ class NNAnim extends Observer
   init: () ->
     @listen(@view.network, 'step', @step)
   step: (e) =>
-    type = e.data.type
+    {type, id, value} = e.data
+    neuron = $(".neuron[data-id='#{id}']")
     if type is 'input'
-      {id, value} = e.data
-      neuron = $(".neuron[data-id='#{id}']")
       @queue.push () ->
         $("text.inLine[data-start='#{id}']").text(value)
         $("text.midLine.output[data-start='#{id}']").text(value)
         $("line.inLine").css('stroke', '#000').attr('marker-end', 'url(#arrowEnd)')
         $("line.inLine[data-start='#{id}']").css('stroke', '#f00').attr('marker-end', 'url(#arrowEndRed)')
+    else if type is 'inputsDone'
+      @queue.push () ->
+        $("line.inLine").css('stroke', '#000').attr('marker-end', 'url(#arrowEnd)')
+    else if type is 'hidden'
+      @queue.push () ->
+        $(".midLine").each ->
+          ($ @).css('opacity', 0)
+        $("text.midLine.output[data-start='#{id}']").text(value)
+        $(".midLine[data-end=#{id}]").each ->
+          ($ @).css('opacity', 1)
+    else if type is 'output'
+      @queue.push () ->
+        $("text.outLine[data-start='#{id}']").text(value)
+    else if type is 'forwardDone'
+      @queue.push () ->
+        $(".midLine").each ->
+          ($ @).css('opacity', 0)
   start: () ->
-    @interval = setInterval(@animate, 500)
+    @interval = setInterval(@animate, 200)
   stop: () ->
     clearInterval @interval
   animate: () =>

@@ -13,13 +13,15 @@ class NNAnim extends Observer
     # Forward
     if type is 'input'
       @queue.push () ->
-        $("text.inLine[data-start='#{id}']").text(value)
+        $("text.inLine").css('fill', '#000')
+        $("text.inLine[data-start='#{id}']").text(value).css('fill', '#f00')
         $("text.midLine.output[data-start='#{id}']").text(value)
         $("line.inLine").css('stroke', '#000').attr('marker-end', 'url(#arrowEnd)')
         $("line.inLine[data-start='#{id}']").css('stroke', '#f00').attr('marker-end', 'url(#arrowEndRed)')
     else if type is 'inputsDone'
       @queue.push () ->
         $("line.inLine").css('stroke', '#000').attr('marker-end', 'url(#arrowEnd)')
+        $("text.inLine").css('fill', '#000')
     else if type is 'hidden'
       @queue.push () ->
         $(".midLine").each ->

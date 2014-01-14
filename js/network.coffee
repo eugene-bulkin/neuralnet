@@ -50,6 +50,7 @@ class NeuralNetwork extends Observable
         value: input
       })
     for layer in @layers
+      console.log layer
       outputs.push layer.map (n) -> n.apply(outputs[outputs.length - 1])
     outputs
   backward: (outputs, goal, rate) ->

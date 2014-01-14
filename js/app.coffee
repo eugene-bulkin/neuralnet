@@ -32,16 +32,19 @@ class NNApp
     @anim.init()
     @view.draw()
 
+  setHandlers: () ->
+    $(window).on('resize', @onResize)
+
+    $('#reinit').on('click', @initialize)
+    $('#numLayers').on('change', @view.hiddenLayers)
+  startAnim: () ->
+    @anim.start()
   onResize: (e) =>
     @view.draw()
 
 $ ->
-
   window.app = new NNApp()
   app.loadFromStorage()
   app.initialize()
-
-  $(window).on('resize', app.onResize)
-
-  $('#reinit').on('click', app.initialize)
-  $('#numLayers').on('change', app.view.hiddenLayers)
+  app.setHandlers()
+  app.startAnim()

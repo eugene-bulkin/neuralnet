@@ -10,6 +10,7 @@ class NNAnim extends Observer
   step: (e) =>
     {type, id, value} = e.data
     neuron = $(".neuron[data-id='#{id}']")
+    # Forward
     if type is 'input'
       @queue.push () ->
         $("text.inLine[data-start='#{id}']").text(value)
@@ -29,10 +30,24 @@ class NNAnim extends Observer
     else if type is 'output'
       @queue.push () ->
         $("text.outLine[data-start='#{id}']").text(value)
-    else if type is 'forwardDone'
+    else if type is 'forwardDone' or type is 'deltaDone'
       @queue.push () ->
         $(".midLine").each ->
           ($ @).css('opacity', 0)
+    # Backward
+    else if type is 'outputDelta'
+      @queue.push () ->
+        out = $("text.outLine[data-start='#{id}']").text()
+        $("text.outLine[data-start='#{id}']").text(out + " (#{value})")
+    else if type is 'hiddenDelta'
+      @queue.push () ->
+        $(".midLine").each ->
+          ($ @).css('opacity', 0)
+        # we use first because otherwise jQuery takes all of them and concatenates
+        out = $("text.midLine.output[data-start='#{id}']").first().text()
+        $("text.midLine.output[data-start='#{id}']").text(out + " (#{value})")
+        $(".midLine[data-start=#{id}]").each ->
+          ($ @).css('opacity', 1)
   start: () ->
     @interval = setInterval(@animate, @delay)
   stop: () ->

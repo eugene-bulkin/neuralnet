@@ -1,4 +1,5 @@
 sum = (l) -> l.reduce (a, b) -> a + b
+flatten = (l) -> l.reduce (a, b) -> a.concat b
 zip = () ->
   lengthArray = (arr.length for arr in arguments)
   length = Math.min(lengthArray...)

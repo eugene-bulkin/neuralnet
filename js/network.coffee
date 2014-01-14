@@ -82,15 +82,35 @@ class NeuralNetwork extends Observable
     outputs
   backward: (outputs, goal, rate) ->
     # calculate all the errors
-    delta = (goal[i] - o for o, i in outputs[outputs.length - 1])
+    delta = []
+    allNeurons = flatten @layers
+    oid = (flatten outputs).length - outputs[outputs.length - 1].length
+    for o, i in outputs[outputs.length - 1]
+      delta.push goal[i] - o
+      @fire('step', {
+        type: 'outputDelta'
+        id: oid
+        value: roundTo(goal[i] - o, 2)
+      })
+      oid += 1
     deltas = ([] for i in [1..@layers.length])
     deltas[deltas.length - 1] = delta
     for i in [(@layers.length - 2)..0]
       [cur, next] = [@layers[i], @layers[i + 1]]
       d = []
+      # Loop through current layer and calculate errors for this layer
       for j in [0...cur.length]
-        d.push sum (deltas[i + 1][k] * w for w, k in (next.map (n) -> n.weights[j]))
+        error = sum (deltas[i + 1][k] * w for w, k in (next.map (n) -> n.weights[j]))
+        @fire('step', {
+          type: 'hiddenDelta'
+          id: @numInputs + allNeurons.indexOf cur[j]
+          value: roundTo(error, 2)
+        })
+        d.push error
       deltas[i] = d
+    @fire('step', {
+      type: 'deltaDone'
+    })
     # change the weights
     paired = zip(@layers, deltas).map (p) -> zip(p...)
     for layer, i in paired

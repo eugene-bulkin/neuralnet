@@ -38,9 +38,11 @@ class NeuralNetwork extends Observable
     for i in [1..numNeurons]
       layer.push new Neuron((Math.random() for j in [1..length]), activation)
     @layers.push layer
+    return
   addOutputLayer: (numNeurons = 1, activation) ->
     @addLayer(numNeurons, activation)
     @finalized = true
+    return
   forward: (inputs) ->
     outputs = [inputs]
     for input, i in inputs
@@ -49,11 +51,7 @@ class NeuralNetwork extends Observable
         id: i
         value: roundTo(input, 2)
       })
-    @fire('step', {
-      type: 'inputsDone'
-      id: null
-      value: null
-    })
+    @fire('step', { type: 'inputsDone' })
     j = inputs.length
     for layer, index in @layers
       output = []
@@ -74,11 +72,7 @@ class NeuralNetwork extends Observable
           })
         j += 1
       outputs.push output
-    @fire('step', {
-      type: 'forwardDone'
-      id: null
-      value: null
-    })
+    @fire('step', { type: 'forwardDone' })
     outputs
   backward: (outputs, goal, rate) ->
     # calculate all the errors
@@ -108,9 +102,7 @@ class NeuralNetwork extends Observable
         })
         d.push error
       deltas[i] = d
-    @fire('step', {
-      type: 'deltaDone'
-    })
+    @fire('step', { type: 'deltaDone' })
     # change the weights
     paired = zip(@layers, deltas).map (p) -> zip(p...)
     for layer, i in paired
@@ -126,10 +118,8 @@ class NeuralNetwork extends Observable
             id: @numInputs + allNeurons.indexOf neuron
             value: [roundTo(weight, 2), prevIndex]
           })
-    @fire('step', {
-      type: 'backwardDone'
-    })
-
+    @fire('step', { type: 'backwardDone' })
+    return
   apply: (inputs) ->
     f = @forward(inputs)
     f[f.length - 1]
@@ -141,6 +131,7 @@ class NeuralNetwork extends Observable
         outputs = @forward x
         # backpropagate
         @backward(outputs, y, learningRate)
+    return
   # lists the neurons in order for use in view
   listNeurons: () ->
     @layers.reduce (p, l) -> p.concat l

@@ -10,6 +10,7 @@ class NNApp
       numOutputs: numOutputs
     }
     window.localStorage.setItem('neuralnet', JSON.stringify obj)
+    return
   loadFromStorage: () ->
     data = JSON.parse window.localStorage.getItem 'neuralnet'
     if not data then return
@@ -20,6 +21,7 @@ class NNApp
     @view.hiddenLayers()
     $('#layers li').each (i) ->
       ($ @).find('input').val(hiddenLayers[i])
+    return
   initialize: () =>
     @anim.stop()
     [numInputs, hiddenLayers, numOutputs] = @view.layerData()
@@ -33,14 +35,16 @@ class NNApp
     @anim.init()
     @anim.start()
     @view.draw()
-
+    return
   setHandlers: () ->
     $(window).on('resize', @onResize)
 
     $('#reinit').on('click', @initialize)
     $('#numLayers').on('change', @view.hiddenLayers)
+    return
   onResize: (e) =>
     @view.draw()
+    return
 
 $ ->
   window.app = new NNApp()

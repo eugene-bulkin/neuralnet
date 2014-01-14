@@ -18,16 +18,20 @@ class Observable
     @id = guid()
   fire: (eventType, data = null) ->
     @subscribers.forEach (s) => s.notify(@id, eventType, data)
+    return
   # precondition: observer not already subscribed
   subscribe: (observer) ->
     @subscribers.push observer
+    return
   unsubscribe: (observer) ->
     for s, i in @subscribers
       if s is observer
         @subscribers.splice(i, 1)
         break
+    return
   destroy: () ->
     @subscribers.forEach (s) => s.remove @
+    return
 
 class Observer
   constructor: () ->
@@ -39,15 +43,18 @@ class Observer
       @subjects.push obj.id
       @listeners[obj.id] = {}
     @listeners[obj.id][evt] = cb
+    return
   notify: (objId, eventType, data) ->
     if eventType of @listeners[objId]
       @listeners[objId][eventType] {
         eventType: eventType
         data: data
       }
+    return
   remove: (subject) ->
     for s, i in @subjects
       if s is subject.id
         delete @listeners[s.id]
         @subjects.splice(i, 1)
         break
+    return

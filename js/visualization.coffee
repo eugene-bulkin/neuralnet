@@ -7,97 +7,103 @@ class NNAnim extends Observer
     @delay = 500
   init: () ->
     @listen(@view.network, 'step', @step)
+    return
   step: (e) =>
     {type, id, value} = e.data
     neuron = $(".neuron[data-id='#{id}']")
     # Forward
-    if type is 'input'
-      @queue.push () ->
-        $("text.inLine").css('fill', '#000')
-        $("text.inLine[data-start='#{id}']").text(value).css('fill', '#f00')
-        $("text.midLine.output[data-start='#{id}']").text(value)
-        $("line.inLine").css('stroke', '#000').attr('marker-end', 'url(#arrowEnd)')
-        $("line.inLine[data-start='#{id}']").css('stroke', '#f00').attr('marker-end', 'url(#arrowEndRed)')
-    else if type is 'inputsDone'
-      @queue.push () ->
-        $("line.inLine").css('stroke', '#000').attr('marker-end', 'url(#arrowEnd)')
-        $("text.inLine").css('fill', '#000')
-    else if type is 'hidden'
-      @queue.push () ->
-        $(".midLine").each ->
-          ($ @).css('opacity', 0)
-        $("text.midLine.output[data-start='#{id}']").text(value)
-        $(".midLine[data-end=#{id}]").each ->
-          ($ @).css('opacity', 1)
-    else if type is 'output'
-      @queue.push () ->
-        $("text.outLine[data-start='#{id}']").text(value)
-    else if type is 'forwardDone' or type is 'deltaDone'
-      @queue.push () ->
-        $(".midLine").each ->
-          ($ @).css('opacity', 0)
-    # Backward
-    else if type is 'outputDelta'
-      @queue.push () ->
-        out = $("text.outLine[data-start='#{id}']").text()
-        $("text.outLine[data-start='#{id}']").text(out + " (#{value})")
-    else if type is 'hiddenDelta'
-      @queue.push () ->
-        $(".midLine").each ->
-          ($ @).css('opacity', 0)
-        # we use first because otherwise jQuery takes all of them and concatenates
-        out = $("text.midLine.output[data-start='#{id}']").first().text()
-        $("text.midLine.output[data-start='#{id}']").text(out + " (#{value})")
-        $(".midLine[data-start=#{id}]").each ->
-          ($ @).css('opacity', 1)
-    else if type is 'changeWeight'
-      [weight, wi] = value
-      @queue.push () ->
-        $("text.midLine").each ->
-          ($ @).css({
-            fill: '#000'
-            opacity: 0
+    switch type
+      when 'input'
+        @queue.push ->
+          $("text.inLine").css('fill', '#000')
+          $("text.inLine[data-start='#{id}']").text(value).css('fill', '#f00')
+          $("text.midLine.output[data-start='#{id}']").text(value)
+          $("line.inLine").css('stroke', '#000').attr('marker-end', 'url(#arrowEnd)')
+          $("line.inLine[data-start='#{id}']").css('stroke', '#f00').attr('marker-end', 'url(#arrowEndRed)')
+      when 'inputsDone'
+        @queue.push ->
+          $("line.inLine").css('stroke', '#000').attr('marker-end', 'url(#arrowEnd)')
+          $("text.inLine").css('fill', '#000')
+      when 'hidden'
+        @queue.push ->
+          $(".midLine").each ->
+            ($ @).css('opacity', 0)
+          $("text.midLine.output[data-start='#{id}']").text(value)
+          $(".midLine[data-end=#{id}]").each ->
+            ($ @).css('opacity', 1)
+      when 'output'
+        @queue.push ->
+          $("text.outLine[data-start='#{id}']").text(value)
+      when type is 'forwardDone' or type is 'deltaDone'
+        @queue.push ->
+          $(".midLine").each ->
+            ($ @).css('opacity', 0)
+      # Backward
+      when 'outputDelta'
+        @queue.push ->
+          out = $("text.outLine[data-start='#{id}']").text()
+          $("text.outLine[data-start='#{id}']").text(out + " (#{value})")
+      when 'hiddenDelta'
+        @queue.push ->
+          $(".midLine").each ->
+            ($ @).css('opacity', 0)
+          # we use first because otherwise jQuery takes all of them and concatenates
+          out = $("text.midLine.output[data-start='#{id}']").first().text()
+          $("text.midLine.output[data-start='#{id}']").text(out + " (#{value})")
+          $(".midLine[data-start=#{id}]").each ->
+            ($ @).css('opacity', 1)
+      when 'changeWeight'
+        [weight, wi] = value
+        @queue.push ->
+          $("text.midLine").each ->
+            ($ @).css({
+              fill: '#000'
+              opacity: 0
+            })
+          $("line.midLine").each ->
+            ($ @).css({
+              stroke: '#000'
+              opacity: 0
+            }).attr('marker-end', 'url(#arrowEnd)')
+          out = $("text.midLine.output[data-start='#{wi}'][data-end='#{id}']")
+          outVal = out.text()
+          out.text(outVal.replace(new RegExp(' \\((.+)\\)'), ''))
+          $("text.midLine.weight[data-start='#{wi}'][data-end='#{id}']").text(weight)
+          $("text.midLine[data-start='#{wi}'][data-end='#{id}']").css({
+            fill: '#f00'
+            opacity: 1
           })
-        $("line.midLine").each ->
-          ($ @).css({
-            stroke: '#000'
-            opacity: 0
-          }).attr('marker-end', 'url(#arrowEnd)')
-        out = $("text.midLine.output[data-start='#{wi}'][data-end='#{id}']")
-        outVal = out.text()
-        out.text(outVal.replace(new RegExp(' \\((.+)\\)'), ''))
-        $("text.midLine.weight[data-start='#{wi}'][data-end='#{id}']").text(weight)
-        $("text.midLine[data-start='#{wi}'][data-end='#{id}']").css({
-          fill: '#f00'
-          opacity: 1
-        })
-        $("line.midLine[data-start='#{wi}'][data-end='#{id}']").css({
-          stroke: '#f00'
-          opacity: 1
-        }).attr('marker-end', 'url(#arrowEndRed)')
-    else if type is 'backwardDone'
-      @queue.push () ->
-        $("text.outLine").each () ->
-          val = ($ @).text()
-          ($ @).text(val.replace(new RegExp(' \\((.+)\\)'), ''))
-        $("text.midLine").each ->
-          ($ @).css({
-            fill: '#000'
-            opacity: 0
-          })
-        $("line.midLine").each ->
-          ($ @).css({
-            stroke: '#000'
-            opacity: 0
-          }).attr('marker-end', 'url(#arrowEnd)')
+          $("line.midLine[data-start='#{wi}'][data-end='#{id}']").css({
+            stroke: '#f00'
+            opacity: 1
+          }).attr('marker-end', 'url(#arrowEndRed)')
+      when 'backwardDone'
+        @queue.push ->
+          $("text.outLine").each ->
+            val = ($ @).text()
+            ($ @).text(val.replace(new RegExp(' \\((.+)\\)'), ''))
+          $("text.midLine").each ->
+            ($ @).css({
+              fill: '#000'
+              opacity: 0
+            })
+          $("line.midLine").each ->
+            ($ @).css({
+              stroke: '#000'
+              opacity: 0
+            }).attr('marker-end', 'url(#arrowEnd)')
+    return
   start: () ->
     @interval = setInterval(@animate, @delay)
+    return
   stop: () ->
     clearInterval @interval
     @queue.length = 0
+    return
   setDelay: (@delay) ->
     @stop()
     @start()
+    return
   animate: () =>
     if @queue.length > 0
       @queue.shift()()

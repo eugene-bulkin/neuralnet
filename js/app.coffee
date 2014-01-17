@@ -36,11 +36,22 @@ class NNApp
     @anim.start()
     @view.draw()
     return
+  forwardKeyPress: (e) =>
+    if e.keyCode is 13
+      @forward e
+  forward: (e) =>
+    inputs = []
+    $('#forward li').each (i) ->
+      inputs.push parseFloat ($ @).find('input').val()
+    @network.forward inputs
   setHandlers: () ->
     $(window).on('resize', @onResize)
 
     $('#reinit').on('click', @initialize)
     $('#numLayers').on('change', @view.hiddenLayers)
+
+    $('#forward button').on('click', @forward)
+    $('#forward input').on('keypress', @forwardKeyPress)
     return
   onResize: (e) =>
     @view.draw()

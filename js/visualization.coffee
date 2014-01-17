@@ -318,6 +318,14 @@ class NNView
 
   setNetwork: (network) ->
     @network = network
+    [numInputs, hiddenLayers, numOutputs] = @layerData()
+    $('#forward ul').empty()
+    for i in [1..numInputs]
+      li = $('<li>')
+      li.append $('<input>').attr {
+        type: 'text'
+      }
+      $('#forward ul').append li
 
   layerData: () ->
     numInputs = 1 * $('#numInputs').val()

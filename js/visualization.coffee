@@ -295,27 +295,6 @@ class NNView
     @drawNetwork(inputs, layers)
     @refreshSVG()
 
-  hiddenLayers: () ->
-    n = 1 * $('#numLayers').val()
-    div = $('#layers')
-    div.empty()
-    if n > 0
-      list = $('<ul>')
-      div.append list
-
-      for i in [1..n]
-        li = $('<li>')
-        label = $('<label>').text("Number of neurons in layer #{i}:")
-        label.append $('<input>').attr {
-          type: 'number'
-          min: 1
-          max: 6
-          value: 2
-          'data-id': i
-        }
-        li.append label
-        list.append li
-
   setNetwork: (network) ->
     @network = network
     [numInputs, hiddenLayers, numOutputs] = @layerData()
